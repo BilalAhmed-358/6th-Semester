@@ -1,0 +1,676 @@
+----------------------breadth first search ----------------------------------------
+def bfs(visited, graph, node): 
+    visited.append(node)
+    queue.append(node)
+    # Creating loop to visit each node
+    while queue: 
+        m = queue.pop(0)
+        print (m,end=" ")
+        
+        for neighbour in graph[m]:
+            if neighbour not in visited:
+                visited.append(neighbour)
+                queue.append(neighbour)
+----------------------a*----------------------------------------
+
+import heapq
+
+def astar(start, goal, graph):
+   
+   
+    open_list = [(0, start, [])]
+    closed_list = set()
+    
+    while open_list:
+        f_score, current_node, path = heapq.heappop(open_list)
+        if current_node == goal:
+            return path + [current_node]
+       
+        closed_list.add(current_node)
+        for neighbor, cost in graph[current_node]:
+         
+            if neighbor in closed_list:
+                continue
+           
+            g_score = f_score + cost
+           
+            h_score = heuristic(neighbor, goal)
+           
+            f_score = g_score + h_score
+           
+            heapq.heappush(open_list, (f_score, neighbor, path + [current_node]))
+  
+    return None
+
+def heuristic(node, goal):
+    return ((node[0] - goal[0])**2 + (node[1] - goal[1])**2)**0.5
+
+# Example usage
+graph = {
+    'A': [('B', 1), ('C', 4)],
+    'B': [('A', 1), ('C', 2), ('D', 5)],
+    'C': [('A', 4), ('B', 2), ('D', 1)],
+    'D': [('B', 5), ('C', 1)]
+}
+start = 'A'
+goal = 'D'
+path = astar(start, goal, graph)
+print(path) # ['A', 'C', 'D']
+
+
+
+
+
+
+
+--------------spacy----------------------------
+import spacy
+nlp = spacy.load("en_core_web_sm")
+sentence = "Joe waited for the train. Mary and Samantha took the bus. I looked for May and Samantha."
+ans = nlp(sentence)
+
+spacy.displacy.render(ans, style="dep", jupyter=True )
+
+
+
+
+-------------------- bfs -----------------------
+from collections import deque
+
+visited = {}
+cost = {}
+parent = {}
+q = deque()
+answer = []
+for node in graph:
+  visited[node] = False
+  cost[node] = False
+  parent[node] = False
+
+start = 'A'
+visited[start] = True
+cost[start] = -1
+q.appendleft(start)
+while not len(q)==0:
+  p = q.pop()
+  answer.append(p)
+  for v in graph[p]:
+
+    if not visited[v]:
+      visited[v] = True
+      parent[v] = p
+      cost[v] = cost[p]+1
+      q.appendleft(v)
+
+
+print(answer)
+print(parent)
+print(cost)
+
+graph = {
+    'A' : ['B','C'],
+     'Z' : ['G'],
+    'B' : ['A'],
+    'C' : ['F','G','A'],
+     'F' : ['C'],
+     'G' :['C','Z']
+     
+}
+
+
+
+----------------------dfs--------------------------
+#dept first search
+
+visited = {}
+answer= []
+frontier = []
+count = 0
+for node in graph:
+  visited[node] = False
+
+start = 'A'
+target  = 3
+visited[start] = True
+frontier.append(start)
+
+while not len(frontier) == 0:
+  p = frontier.pop()
+  answer.append(p)
+  count = count+1
+  if count == target:
+    break
+  for v in graph[p]:
+    if not visited[v]:
+      frontier.append(v)
+      visited[v] = True
+
+print(answer)
+
+
+
+
+
+
+
+-----------------tree-----------------
+class treenode:
+  def __init__ (self,value):
+    self.left = None
+    self.right = None
+    self.value = value
+  
+  def insert(self,value):
+    if value < self.value:
+      if self.left is None:
+        self.left = treenode(value)
+      else:
+        self.left.insert(value)
+    elif value>self.value:
+      if self.right is None:
+        self.right = treenode(value)
+      else:
+        self.right.insert(value)
+    else:
+      print("ok")
+
+  def inorder(self):
+    if self.left:
+      self.left.inorder()
+    print(self.value)
+    if self.right:
+      self.right.inorder()
+    #post order mae print last mae ayega or preorder mae first mae
+t1 =treenode(1)
+t1.insert(10)
+t1.insert(15)
+t1.insert(0)
+
+
+
+
+-------------travelling salesman---------------------
+import numpy as np
+import itertools
+import sys
+
+
+def get_distance(v1,v2,matrix):
+  return matrix[v1][v2]
+
+def tsp(matrix):
+  cities = list(range(len(matrix)))
+  shortest_distance = 10**10
+  for route in itertools.permutations(cities):
+    totaldistance = 0
+    for i in range(len(route)-1):
+      totaldistance += get_distance(route[i],route[i+1],matrix)
+    totaldistance += get_distance(route[-1],route[0],matrix)
+
+    if shortest_distance >totaldistance:
+      shortest_distance = totaldistance
+      finalroute = route
+  return finalroute,shortest_distance  
+
+
+
+
+
+
+distance_matrix = np.array([
+    [0, 10, 15, 20],
+    [10, 0, 35, 25],
+    [15, 35, 0, 30],
+    [20, 25, 30, 0]
+])
+shortest_route, shortest_distance = tsp(distance_matrix)
+print("Shortest Route:", shortest_route)
+print("Shortest Distance:", shortest_distance)
+
+
+------------------UCS------------------------
+from queue import PriorityQueue
+
+def uniform_cost_search(graph, start, goal):
+    frontier = PriorityQueue()
+    frontier.put((0, start))
+    came_from = {}
+    cost_so_far = {}
+    came_from[start] = None
+    cost_so_far[start] = 0
+    
+    while not frontier.empty():
+        _, current = frontier.get()
+        
+        if current == goal:
+            break
+            
+        for next_node, cost in graph[current].items():
+            new_cost = cost_so_far[current] + cost
+            if next_node not in cost_so_far or new_cost < cost_so_far[next_node]:
+                cost_so_far[next_node] = new_cost
+                priority = new_cost
+                frontier.put((priority, next_node))
+                came_from[next_node] = current
+    
+    return came_from, cost_so_far
+
+# Example graph
+graph = {
+    'A': {'B': 2, 'C': 3},
+    'B': {'D': 1, 'E': 4},
+    'C': {'F': 7},
+    'D': {'G': 5},
+    'E': {'H': 3},
+    'F': {'I': 2},
+    'G': {'J': 4},
+    'H': {'J': 1},
+    'I': {'J': 3},
+    'J': {}
+}
+
+start = 'A'
+goal = 'J'
+
+# Run UCS
+came_from, cost_so_far = uniform_cost_search(graph, start, goal)
+
+# Print path from start to goal
+path = [goal]
+node = goal
+while node != start:
+    node = came_from[node]
+    path.append(node)
+path.reverse()
+print(f"Path: {' -> '.join(path)}")
+print(f"Cost: {cost_so_far[goal]}")
+
+
+
+-----------------best first search----------------------
+from queue import PriorityQueue
+import math
+
+def heuristic(node, goal):
+    # Euclidean distance heuristic
+    (x1, y1) = node
+    (x2, y2) = goal
+    return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+
+def best_first_search(graph, start, goal):
+    frontier = PriorityQueue()
+    frontier.put((heuristic(start, goal), start))
+    came_from = {}
+    cost_so_far = {}
+    came_from[start] = None
+    cost_so_far[start] = 0
+    
+    while not frontier.empty():
+        _, current = frontier.get()
+        
+        if current == goal:
+            break
+            
+        for next_node in graph.neighbors(current):
+            new_cost = cost_so_far[current] + graph.cost(current, next_node)
+            if next_node not in cost_so_far or new_cost < cost_so_far[next_node]:
+                cost_so_far[next_node] = new_cost
+                priority = heuristic(next_node, goal)
+                frontier.put((priority, next_node))
+                came_from[next_node] = current
+    
+    return came_from, cost_so_far
+
+
+
+
+-----------genetic-----------------------------------------
+import random
+
+def fitness(target, candidate):
+    score = 0
+    for i in range(len(target)):
+        if target[i] == candidate[i]:
+            score += 1
+    return score / len(target)
+
+def generate_population(length, gene_pool, size):
+    return [generate_individual(length, gene_pool) for i in range(size)]
+
+def generate_individual(length, gene_pool):
+    return [random.choice(gene_pool) for i in range(length)]
+
+def mutate(parent, gene_pool, mutation_rate):
+    child = parent[:]
+    for i in range(len(child)):
+        if random.random() < mutation_rate:
+            child[i] = random.choice(gene_pool)
+    return child
+
+def select_pair(population):
+    return random.choices(population=population, weights=None, k=2)
+
+def breed(male, female):
+    child = []
+    for i in range(len(male)):
+        if random.random() < 0.5:
+            child.append(male[i])
+        else:
+            child.append(female[i])
+    return child
+
+def evolve_to_solve(target, gene_pool, size, generation_limit, mutation_rate):
+    population = generate_population(len(target), gene_pool, size)
+    for generation in range(generation_limit):
+        scores = [(fitness(target, individual), individual) for individual in population]
+        scores.sort(reverse=True)
+        if scores[0][0] == 1.0:
+            return scores[0][1]
+        next_generation = [scores[0][1], scores[1][1]]
+        while len(next_generation) < size:
+            male, female = select_pair(population)
+            child = breed(male, female)
+            child = mutate(child, gene_pool, mutation_rate)
+            next_generation.append(child)
+        population = next_generation
+    return None
+
+
+
+
+-----------hueristic with graph-----------------------------------------
+def a_star(graph,hn,start):
+    Open={start:hn[start]}
+    closed=[]
+    seq=[]
+    curr=start
+    while hn[curr] != 0:
+        li=graph[curr]
+        seq.append(curr)
+        
+        for i in li:
+            Open[i[0]]=Open[curr]-hn[curr]+hn[i[0]]+i[1]
+        
+        Open.pop(curr)
+        closed.append(curr)
+
+        min_hn=list(Open.keys())[0]
+        for i in Open.keys():
+            if Open[i] < Open[min_hn]:
+                min_hn=i
+        
+        curr=min_hn
+
+
+    seq.append(curr)
+    print("Sequence of nodes visited:",seq)
+    res=path(seq,graph)
+    print("Path of goal Node:",res[0])
+    print("Cost of Path: ",res[1])
+
+
+def path(seq,graph):
+    i=len(seq)-1
+    Path=[seq[i]]
+    i=i-1
+    sum=0
+    while i>=0:
+        li=graph[seq[i]]
+        flag=False
+        for temp in li:
+            if temp[0]==Path[0]:
+                flag=True
+                sum+=temp[1]
+                break
+        if flag:
+            Path.insert(0,seq[i])
+        i=i-1
+    return (Path,sum)
+
+
+
+
+def main():
+    graph={
+            "S":[("A",1),("G",10)],
+            "A":[("C",1),("B",2)],
+            "B":[("D",5)],
+            "C":[("D",3),("G",4)],
+            "D":[("G",4)],
+            "G":[]
+        }
+    hn={
+        "A":3,
+        "B":4,
+        "C":2,
+        "D":6,
+        "G":0,
+        "S":5
+    }
+    a_star(graph,hn,"S")   
+
+    
+
+main()
+
+
+-----------hueristic with maze with greedy and A*----------------------------------
+def greedy(maze,start,row,col):
+    Open=[start]
+    closed=[]
+    seq=[]
+    curr=start
+    while maze[curr[0]][curr[1]] != 0:
+        seq.append(curr)
+        
+        if curr[0]-1 >= 0 and maze[curr[0]-1][curr[1]]!=-1 :
+            if (curr[0]-1,curr[1]) not in seq:
+                Open.append((curr[0]-1,curr[1]))
+        if curr[0]+1 <= row-1 and maze[curr[0]+1][curr[1]] !=-1:
+            if (curr[0]+1,curr[1]) not in seq:
+                Open.append((curr[0]+1,curr[1]))
+        if curr[1]-1 >= 0 and maze[curr[0]][curr[1]-1]!=-1:
+            if (curr[0],curr[1]-1) not in seq:
+                Open.append((curr[0],curr[1]-1))
+        if curr[1]+1 <= col-1 and maze[curr[0]][curr[1]+1] !=-1:
+            if (curr[0],curr[1]+1) not in seq:
+                Open.append((curr[0],curr[1]+1))
+        
+        Open.remove(curr)
+        closed.append(curr)
+        min_hn=Open[0]
+        for i in Open:
+            if maze[min_hn[0]][min_hn[1]] > maze[i[0]][i[1]]:
+                min_hn=i
+        
+        curr=min_hn
+
+
+    seq.append(curr)
+    print("Sequence of nodes visited:\n",seq)
+    res=path(seq,maze)
+    print("Path of goal Node:\n",res[0])
+    print("Total Cost of Path: ",res[1])
+
+def a_star(maze,start,row,col):
+    start1=(start[0],start[1],0)
+    Open=[start1]
+    closed=[]
+    seq=[]
+    curr=start1
+    while maze[curr[0]][curr[1]] != 0:
+        seq.append((curr[0],curr[1]))
+        if curr[0]-1 >= 0 and maze[curr[0]-1][curr[1]]!=-1 :
+            if (curr[0]-1,curr[1]) not in seq:
+                Open.append((curr[0]-1,curr[1],curr[2]+1+maze[curr[0]-1][curr[1]]))
+        if curr[0]+1 <= row-1 and maze[curr[0]+1][curr[1]] !=-1:
+            if (curr[0]+1,curr[1]) not in seq:
+                Open.append((curr[0]+1,curr[1],curr[2]+1+maze[curr[0]+1][curr[1]]))
+        if curr[1]-1 >= 0 and maze[curr[0]][curr[1]-1]!=-1:
+            if (curr[0],curr[1]-1) not in seq:
+                Open.append((curr[0],curr[1]-1,curr[2]+1+maze[curr[0]][curr[1]-1]))
+        if curr[1]+1 <= col-1 and maze[curr[0]][curr[1]+1] !=-1:
+            if (curr[0],curr[1]+1) not in seq:
+                Open.append((curr[0],curr[1]+1,curr[2]+1+maze[curr[0]][curr[1]+1]))
+        
+        Open.remove(curr)
+        closed.append(curr)
+        min_hn=Open[0]
+        for i in Open:
+            if min_hn[2] > i[2]:
+                min_hn=i
+        
+        curr=min_hn
+
+
+    seq.append((curr[0],curr[1]))
+    print("Sequence of nodes visited:\n",seq)
+    res=path(seq,maze)
+    print("Path of goal Node:\n",res[0])
+    print("Total Cost of Path: ",res[1])
+
+
+
+def path(seq,maze):
+    i=len(seq)-1
+    Path=[seq[i]]
+    sum=0
+    curr=seq[i]
+    i=i-1
+    while i>=0:
+        
+        if abs(seq[i][0]-curr[0])+abs(seq[i][1]-curr[1])==1:
+            sum+=1
+            Path.insert(0,seq[i])
+            curr=seq[i]
+
+        i=i-1
+    return (Path,sum)
+
+
+
+
+def main():
+    maze=[
+            [-1 ,10 ,9  ,8  ,7  ,6  ,5  ,4  ,3  ,2  ,1  ,0 ],
+            [-1 ,11 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,1 ],
+            [-1 ,12 ,-1 ,10 ,9  ,8  ,7  ,6  ,5  ,4  ,-1 ,2 ],
+            [-1 ,13 ,-1 ,11 ,-1 ,-1 ,-1 ,-1 ,-1 ,5  ,-1 ,3 ],
+            [-1 ,14 ,13 ,12 ,-1 ,10 ,9  ,8  ,7  ,6  ,-1 ,4 ],
+            [-1 ,-1 ,-1 ,13 ,-1 ,11 ,-1 ,-1 ,-1 ,-1 ,-1 ,5 ],
+            ['S'  ,16 ,15 ,14 ,-1 ,12 ,11 ,10 ,9  ,8  ,7  ,6 ],
+            ]
+    print("Greedy best first")
+    greedy(maze,(6,0),len(maze),len(maze[0]))   
+    print("A* search")
+    a_star(maze,(6,0),len(maze),len(maze[0]))
+    
+
+main()
+
+------------------------ past paper question 01 ------------------------------------
+import random
+import numpy as np
+maze = [['P', 'B', 'P', 'P', 'P', 'P', 'P', 'P'],
+        ['P', 'B', 'P', 'B', 'P', 'B', 'P', 'B'],
+        ['P', 'P', 'P', 'B', 'P', 'P', 'B', 'P'],
+        ['B', 'B', 'B', 'B', 'P', 'P', 'P', 'B'],
+        ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'B']]
+
+
+
+def calFitness(queueFit,queueIndex):
+    for i in range(len(population)):
+        fitness=0
+        for j in range(len(population[i])):
+            if population[i][j]!=target[j]:
+                fitness+=1
+        queueFit.append(fitness)
+        queueIndex.append(i)
+    return queueFit,queueIndex
+
+def mutateChild(individual):
+    newGene=random.choice(genes)
+    while newGene in individual:
+        newGene=random.choice(genes)
+    index=random.randint(1,len(individual)-1)
+    return individual[:index]+[newGene]+individual[index+1:]
+
+def sortFitness(queueFit,queueIndex):
+    tempFit=np.array(queueFit)
+    tempIndex=np.array(queueIndex)
+    sort=np.argsort(tempFit)
+    queueFit=list(tempFit[sort])
+    queueIndex=list(tempIndex[sort])
+    return queueFit,queueIndex
+
+def crossover(queueFit,queueIndex):
+    index=random.randint(1,len(target)-2)
+
+    firstChormosome=population[queueIndex[0]]
+    secondChormosome=population[queueIndex[1]]
+    childFirst=firstChormosome[:index]+secondChormosome[index:]
+    childSecond=secondChormosome[:index]+firstChormosome[index:]
+    
+    if random.random()>0.1:
+        childFirst=mutateChild(childFirst)
+    if random.random()>0.1:
+        childSecond=mutateChild(childSecond)
+    
+    population.append(childFirst)
+    population.append(childSecond)
+
+    queueFit,queueIndex=calFitness(queueFit,queueIndex)
+    queueFit,queueIndex=sortFitness(queueFit,queueIndex)
+    return queueFit,queueIndex
+
+# [fitness, chromo]
+
+def runGenetic():
+    queueFit=[]
+    queueIndex=[]
+    queueFit,queueIndex=calFitness(queueFit,queueIndex)
+    queueFit,queueIndex=sortFitness(queueFit,queueIndex)
+    count=0
+    while target!=population[queueIndex[0]] and count<=1000:
+        queueFit,queueIndex=crossover(queueFit,queueIndex)
+        queueFit=queueFit[:2]
+        queueIndex=queueIndex[:2]
+        count+=1
+        print(population[queueIndex[0]],len(target)-queueFit[0])
+    if count==1001:
+        print('1000 Generations Reached!')
+        print(population[queueIndex[0]],len(target)-queueFit[0])
+    else:
+        print('Target Path found at',count,'iterations.')
+
+
+
+target=[(0,0),(1,0),(2,0),(2,1),(2,2),(1,2),(0,2),(0,3),(0,4),(0,5),(0,6),(0,7)]
+genes=[(0,0),(0,2),(0,3),(0,4),(0,5),(0,6),(0,7),(1,0),(1,2),(1,4),(1,6),(2,0),(2,1),(2,2),(2,4),(2,5),(2,7),(3,4),(3,5),(3,6),(4,0),(4,1),(4,2),(4,3),(4,4),(4,5),(4,6)]
+size=100
+population=[[] for i in range(size)]
+i=0
+while i<size:
+    population[i].append((0,0))
+    j=0
+    while j<len(target)-2:
+        index=random.randint(0,len(genes)-1)
+        if genes[index]==(0,0) or genes[index]==(0,7):
+            continue
+        if genes[index] in population[i]:
+            continue
+        population[i].append(genes[index])
+        j+=1
+    population[i].append((0,7))
+    i+=1
+
+c=0
+# for rows in population:
+#     if len(rows)==len(target):
+#         c+=1
+# print(c)
+# print(random.random())
+runGenetic()
+
+

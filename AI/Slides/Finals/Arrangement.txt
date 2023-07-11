@@ -1,0 +1,8 @@
+Uncertainity
+Bayes Nets
+Markov Models
+HMM
+Linear Regression and Kmeans
+Intro to ML
+ROC
+Reinforcement Learning

@@ -1,0 +1,115 @@
+Q1)
+// Define pins for the sensors and motors
+const int leftSensor = 2;
+const int rightSensor = 3;
+const int leftMotor = 5;
+const int rightMotor = 6;
+
+// Set the threshold value for the sensors
+const int threshold = 500;
+
+void setup() {
+  // Set the sensor pins as input
+  pinMode(leftSensor, INPUT);
+  pinMode(rightSensor, INPUT);
+
+  // Set the motor pins as output
+  pinMode(leftMotor, OUTPUT);
+  pinMode(rightMotor, OUTPUT);
+}
+
+void loop() {
+  int leftValue = analogRead(leftSensor);  // Read the value of the left sensor
+  int rightValue = analogRead(rightSensor);  // Read the value of the right sensor
+
+  // Determine the direction to move based on the sensor values
+  if (leftValue > threshold && rightValue > threshold) {  // Both sensors detect the line
+    digitalWrite(leftMotor, HIGH);
+    digitalWrite(rightMotor, HIGH);
+  }
+  else if (leftValue > threshold && rightValue < threshold) {  // Only left sensor detects the line
+    digitalWrite(leftMotor, LOW);
+    digitalWrite(rightMotor, HIGH);
+  }
+  else if (leftValue < threshold && rightValue > threshold) {  // Only right sensor detects the line
+    digitalWrite(leftMotor, HIGH);
+    digitalWrite(rightMotor, LOW);
+  }
+  else {  // Neither sensor detects the line
+    digitalWrite(leftMotor, LOW);
+    digitalWrite(rightMotor, LOW);
+  }
+}
+
+Q2)
+const int ledPin = 9;  // Set the pin for the LED
+int brightness = 0;  // Set the initial brightness to 0
+int fadeAmount = 5;  // Set the amount to fade by
+
+void setup() {
+  pinMode(ledPin, OUTPUT);  // Set the LED pin as output
+}
+
+void loop() {
+  analogWrite(ledPin, brightness);  // Set the LED brightness
+
+  brightness += fadeAmount;  // Increase or decrease the brightness by the fade amount
+
+  if (brightness <= 0 || brightness >= 255) {  // Reverse the fade direction when the brightness reaches the minimum or maximum value
+    fadeAmount = -fadeAmount;
+  }
+
+  delay(30);  // Delay for a short amount of time to slow down the fade speed
+}
+
+Q3)
+done and written the code below
+
+Q4)
+import RPi.GPIO as GPIO
+import time
+
+GPIO.setmode(GPIO.BCM)  # Set the GPIO pin numbering scheme
+GPIO.setwarnings(False)  # Disable GPIO warnings
+
+ledPins = [18, 23, 24]  # Set the pin numbers for the LEDs
+
+def setup():
+    for pin in ledPins:
+        GPIO.setup(pin, GPIO.OUT)  # Set each LED pin as an output
+
+def writeValues(values):
+    for i in range(len(ledPins)):
+        GPIO.output(ledPins[i], values[i])  # Write the values to the LEDs
+
+def main():
+    while True:
+        writeValues([1, 0, 0])  # Write 1 to the first LED and 0 to the others
+        time.sleep(3)  # Delay for 3 seconds
+        writeValues([0, 1, 0])  # Write 1 to the second LED and 0 to the others
+        time.sleep(3)  # Delay for 3 seconds
+        writeValues([0, 0, 1])  # Write 1 to the third LED and 0 to the others
+        time.sleep(3)  # Delay for 3 seconds
+
+if __name__ == '__main__':
+    setup()
+    main()
+
+Q5)
+Raspberry Pi and Arduino are both popular platforms used in the world of AI, but they have some significant technical differences.
+
+Raspberry Pi is a credit card-sized single-board computer that runs on Linux-based operating systems, while Arduino is a microcontroller board that is programmed with a simplified version of C++. Raspberry Pi has more processing power and memory than Arduino, and can be used for more complex projects that require multimedia capabilities, such as video and audio processing. Raspberry Pi can also be connected to the internet and used for web-based applications, while Arduino is better suited for simple projects that require real-time control, such as robotics and automation.
+
+One example of how these platforms are used in the world of AI is in the field of computer vision. Computer vision is the ability of a computer to interpret and understand visual information from the world around it. Raspberry Pi can be used to run machine learning algorithms for image recognition and object detection, while Arduino can be used to control the motors and sensors of a robot that performs these tasks in the real world.
+
+For example, a team of researchers at the University of California, Berkeley used a Raspberry Pi to run a machine learning algorithm that can recognize handwritten digits in real time. They used the Raspberry Pi camera module to capture images of handwritten digits, and then processed these images using a convolutional neural network (CNN) running on the Raspberry Pi. The output of the CNN was then used to control an Arduino robot that could draw the recognized digit on a whiteboard.
+
+This project demonstrates how Raspberry Pi and Arduino can be used together to create an intelligent system that combines machine learning with real-time control. The Raspberry Pi provides the computational power and memory needed to run the machine learning algorithm, while the Arduino provides the real-time control of the robot's motors and sensors.
+
+In conclusion, both Raspberry Pi and Arduino have their own strengths and weaknesses, and are better suited for different types of projects in the world of AI. Raspberry Pi is more powerful and versatile, and can be used for complex projects that require multimedia capabilities and internet connectivity. Arduino is simpler and more focused on real-time control, and is better suited for simple projects that require precise control over sensors and motors. Together, these platforms can be used to create intelligent systems that combine machine learning with real-time control, as demonstrated in the example of computer vision and robotics.
+
+Q6)
+Will submit before the next lab In Sha Allah.
+
+
+
